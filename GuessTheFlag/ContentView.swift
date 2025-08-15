@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var userScore = 0
     @State private var showingScoreAlert = false
     @State private var scoreAlertTitle = ""
+    @State private var scoreAlertMessage = ""
+    @State private var askedQuestionsCount = 0
     
     var body: some View {
         ZStack {
@@ -54,25 +56,35 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Text("SCORE: \(userScore)")
+                Text("SCORE: \(userScore)/8")
                     .foregroundStyle(.white)
                     .font(.title.bold())
             }
             .padding()
         }
         .alert(scoreAlertTitle, isPresented: $showingScoreAlert) {
-            Button("Continue", action: askNextQuestion)
+            if askedQuestionsCount < 8 {
+                Button("Continue", action: askNextQuestion)
+            } else {
+                Button("Restart Game", action: startNewGame)
+            }
+            
+        
         } message: {
-            Text("Your Score: \(userScore)")
+            Text(scoreAlertMessage)
         }
     }
     
     func checkAnswer(_ tappedFlag: Int) {
+        askedQuestionsCount += 1
+        
         if tappedFlag == correctAnswer {
             userScore += 1
             scoreAlertTitle = "Correct!"
+            scoreAlertMessage = "Your Score: \(userScore)"
         } else {
             scoreAlertTitle = "Oops, wrong!"
+            scoreAlertMessage = "That's the flag of \(countries[tappedFlag])."
         }
         
         showingScoreAlert = true
@@ -81,6 +93,12 @@ struct ContentView: View {
     func askNextQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 1...2)
+    }
+    
+    func startNewGame() {
+        userScore = 0
+        askedQuestionsCount = 0
+        askNextQuestion()
     }
 }
 
