@@ -23,6 +23,20 @@ struct FlagImage: View {
 
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
+    let labels = [
+        "Estonia": "Flag with three horizontal stripes. Top stripe blue, middle stripe black, bottom stripe white.",
+        "France": "Flag with three vertical stripes. Left stripe blue, middle stripe white, right stripe red.",
+        "Germany": "Flag with three horizontal stripes. Top stripe black, middle stripe red, bottom stripe gold.",
+        "Ireland": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe orange.",
+        "Italy": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe red.",
+        "Nigeria": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe green.",
+        "Poland": "Flag with two horizontal stripes. Top stripe white, bottom stripe red.",
+        "Spain": "Flag with three horizontal stripes. Top thin stripe red, middle thick stripe gold with a crest on the left, bottom thin stripe red.",
+        "UK": "Flag with overlapping red and white crosses, both straight and diagonally, on a blue background.",
+        "Ukraine": "Flag with two horizontal stripes. Top stripe blue, bottom stripe yellow.",
+        "US": "Flag with many red and white stripes, with white stars on a blue background in the top-left corner."
+    ]
+    
     @State private var correctAnswer = Int.random(in: 0...2)
     
     @State private var userScore = 0
@@ -58,6 +72,8 @@ struct ContentView: View {
                             .font(.largeTitle.bold())
                             .foregroundStyle(.white)
                     }
+                    .accessibilityElement()
+                    .accessibilityLabel("Tap the flag of \(countries[correctAnswer])")
                     
                     ForEach(0..<3) { flagNumber in
                         Button {
@@ -74,6 +90,8 @@ struct ContentView: View {
                                 .opacity(flagTapped == flagNumber ? 1 : flagOpacity)
                                 .scaleEffect(flagTapped == flagNumber ? tappedFlagScale : scaleAmount)
                         }
+                        // SwiftUI’s default behavior is to read out the image names as their VoiceOver label, which means anyone using VoiceOver can just move over our three flags to have the system announce which one is correct. SOLUTION:
+                        .accessibilityLabel(labels[countries[flagNumber], default: "Unknown Flag"])
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -86,6 +104,7 @@ struct ContentView: View {
                 Text("SCORE: \(userScore)/8")
                     .foregroundStyle(.white)
                     .font(.title.bold())
+                    .accessibilityLabel("You have answered \(userScore) correctly out of 8 questions.")
             }
             .padding()
         }
@@ -95,7 +114,6 @@ struct ContentView: View {
             } else {
                 Button("Restart Game", action: startNewGame)
             }
-            
         
         } message: {
             Text(scoreAlertMessage)

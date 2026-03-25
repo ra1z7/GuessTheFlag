@@ -1,6 +1,0 @@
-# Xcode user data
-xcuserdata/
-*.xcuserdatad
-
-# macOS
-.DS_Store
